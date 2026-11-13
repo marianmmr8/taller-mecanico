@@ -2,9 +2,11 @@
 // Controlador frontal: todas las peticiones de la aplicación entran por aquí
 require __DIR__ . '/config/conexion.php';
 require __DIR__ . '/vistas/ayudas.php';
+require __DIR__ . '/modelos/ReparacionModelo.php';
+
 
 $pdo = conectar();
-
+$modelo = new ReparacionModelo($pdo);
 
 // TODO 1: guarda en $accion el parámetro «accion» de la dirección;
 //         si no llega, vale 'listado'
