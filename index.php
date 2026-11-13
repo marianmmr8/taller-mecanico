@@ -2,7 +2,7 @@
 // Controlador frontal: todas las peticiones de la aplicación entran por aquí
 require __DIR__ . '/config/conexion.php';
 require __DIR__ . '/vistas/ayudas.php';
-require __DIR__ . '/modelos/ReparacionModelo.php';
+require __DIR__ . '/modelos/ReparacionesModelo.php';
 
 
 $pdo = conectar();
@@ -17,7 +17,8 @@ $accion = $_GET['accion'] ?? '';
 //         es 'listado' y «No existe la acción …» (con la acción escapada)
 //         en cualquier otro caso
 match ($accion) {
-    'listado' => print('Aquí irá el listado de reparaciones'),
+    // Prueba provisional del modelo: se quita en el paso 4
+    'listado' => print('<pre>' . htmlspecialchars(print_r($modelo->todas(), true)) . '</pre>'),
     default   => print('No existe la acción ' . htmlspecialchars($accion)),
 };
 
