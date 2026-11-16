@@ -13,7 +13,7 @@ class ReparacionModelo
 
 
         $sql ="select reparacion.id, reparacion.fecha_entrega , reparacion.fecha_salida,reparacion.descripcion, 
-        vehiculo.matricula, vehiculo.marca, mecanicos.nombre as mecanico
+        vehiculo.matricula, vehiculo.marca, vehiculo.modelo, mecanicos.nombre as mecanico
         FROM reparacion, vehiculo, mecanicos 
         WHERE reparacion.id_vehiculo = vehiculo.id 
         AND reparacion.id_mecanico = mecanicos.id 
