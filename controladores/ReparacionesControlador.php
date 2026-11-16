@@ -1,6 +1,9 @@
 <?php
 // Controlador: recibe la petición, usa los modelos y elige la vista.
 // No contiene SQL ni HTML.
+
+use const Dom\INDEX_SIZE_ERR;
+
 class ReparacionesControlador
 {
     public function __construct(private ReparacionModelo $reparaciones) {}
@@ -16,6 +19,47 @@ class ReparacionesControlador
             'reparaciones' => $this->reparaciones->todas(),
         ]);
     }
+
+
+
+
+        // index.php?accion=ver&id=3
+    public function ver(): void
+    {
+        // TODO 3: lee el id de la dirección como número entero
+
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        // TODO 4: pide la reparación al modelo; si no hay id o no existe,
+        //         llama a $this->noEncontrada() y termina con return
+
+        $reparacion = $id ? $this->reparaciones->buscar($id) : null;
+        if(!$reparacion){
+            $this->noEncontrada();
+            return;
+        }
+
+        // TODO 5: pide sus piezas y calcula el total:
+        //         mano de obra más la suma de los importes
+
+        $piezas = $this->reparaciones->piezas($id);
+        $total = $reparacion['mano_obra'] + array_sum(array_column($piezas, 'importe'));
+
+
+        // TODO 6: muestra la vista «ficha» con cuatro datos: titulo
+        //         («Reparación n.º 3»), reparacion, piezas y total
+
+        $this->mostrar('ficha',[
+        'titulo' => 'Reparacion nº' . $reparacion['id'],
+        'reparacion' => $reparacion,
+        'piezas' => $piezas,
+        'total' => $total
+        ]);
+
+    }
+
+
+
 
     // Cualquier acción que no exista
     public function noEncontrada(): void
@@ -38,4 +82,10 @@ class ReparacionesControlador
         extract($datos);
         require __DIR__ . '/../vistas/' . $vista . '.php';
     }
+
+
+
+
+
+
 }

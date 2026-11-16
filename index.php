@@ -20,6 +20,7 @@ $accion = $_GET['accion'] ?? '';
 match ($accion) {
     // Prueba provisional del modelo: se quita en el paso 4
     'listado' => $controlador->listado(),
+    'ver'     => $controlador->ver(),
     default   => $controlador->noENcontrada(),
 };
 

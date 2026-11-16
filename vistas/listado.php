@@ -1,4 +1,10 @@
-<?php require __DIR__ . '/cabecera.php'; ?>
+<?php 
+/**
+ * @var array $reparaciones
+* @var string $titulo 
+*/
+
+require __DIR__ . '/cabecera.php'; ?>
 
 <?php if (!$reparaciones): ?>
   <p>Todavía no hay ninguna reparación.</p>
@@ -16,7 +22,11 @@
            <tr>
             <td><?= fecha ($re['fecha_entrega']) ?></td>
             <td><?= e($re['marca'] . ' ' . $re['modelo'] ) ?> (<?= e($re['matricula']) ?>)</td>
-            <td><?= e($re['descripcion']) ?></td>
+            <td>
+                <a href="index.php?accion=ver&amp;id=<?= $re['id'] ?>">
+                <?= e($re['descripcion']) ?>
+                </a>
+            </td>
             <td><?= e($re['mecanico']) ?></td>
             <td>
                 <?php if($re['fecha_salida'] === null): ?>
