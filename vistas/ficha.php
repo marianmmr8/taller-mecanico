@@ -52,6 +52,9 @@ require __DIR__ . '/cabecera.php'; ?>
                  <th class="num">Unidades</th>
                   <th class="num">Precio</th>
                    <th class="num">Importe</th>
+                   <?php if ($reparacion['fecha_salida'] === null): ?>
+                     <th>Acción</th>
+                   <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +64,16 @@ require __DIR__ . '/cabecera.php'; ?>
                     <td class="num"><?= $pi['unidades'] ?></td>
                     <td class="num"><?= euros($pi['precio']) ?></td>
                     <td class="num"><?= euros($pi['importe']) ?></td>
+                    <?php if ($reparacion['fecha_salida'] === null): ?>
+                      <td>
+                        <form method="post" action="index.php?accion=quitarPieza" class="piece-remove-form">
+                          <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
+                          <input type="hidden" name="id" value="<?= (int) $reparacion['id'] ?>">
+                          <input type="hidden" name="pieza_id" value="<?= (int) $pi['id_pieza'] ?>">
+                          <button class="button-danger" type="submit">Quitar</button>
+                        </form>
+                      </td>
+                    <?php endif; ?>
 
                 </tr>
                 <?php endforeach;?>
@@ -71,12 +84,13 @@ require __DIR__ . '/cabecera.php'; ?>
 <?php if ($reparacion['fecha_salida'] === null): ?>
   <h2>Añadir pieza</h2>
   <form method="post" class="linea" action="index.php?accion=anadirPieza&amp;id=<?= (int) $reparacion['id'] ?>">
+    <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
     <label for="pieza_id">Pieza</label>
     <select name="pieza_id" id="pieza_id" required>
       <option value="">Elige una pieza…</option>
       <?php foreach ($catalogoPiezas as $pieza): ?>
-        <option value="<?= (int) $pieza['id'] ?>">
-          <?= e($pieza['nombre'] . ' · ' . $pieza['referencia'] . ' · ' . euros($pieza['precio'])) ?>
+        <option value="<?= (int) $pieza['id'] ?>" <?= (int) $pieza['stock'] < 1 ? 'disabled' : '' ?>>
+          <?= e($pieza['nombre'] . ' · ' . $pieza['referencia'] . ' · ' . euros($pieza['precio']) . ' · Stock: ' . $pieza['stock']) ?>
         </option>
       <?php endforeach; ?>
     </select>
@@ -88,6 +102,7 @@ require __DIR__ . '/cabecera.php'; ?>
 
   <h2>Añadir mano de obra</h2>
   <form method="post" class="linea" action="index.php?accion=anadirManoObra">
+    <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
     <input type="hidden" name="id" value="<?= (int) $reparacion['id'] ?>">
     <label for="horas">Horas</label>
     <input type="number" name="horas" id="horas" min="0.01" step="0.25" required>
@@ -98,6 +113,7 @@ require __DIR__ . '/cabecera.php'; ?>
   </form>
 
   <form method="post" class="linea" action="index.php?accion=cerrar">
+    <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
     <input type="hidden" name="id" value="<?= (int) $reparacion['id'] ?>">
     <button>Registrar salida</button>
   </form>

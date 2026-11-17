@@ -60,6 +60,7 @@ class ReparacionesControlador
         $avisos = [
             'creada' => 'Reparación abierta.',
             'pieza' => 'Pieza añadida a la reparación.',
+            'pieza_quitada' => 'Pieza quitada y devuelta al almacén.',
             'salida' => 'Salida anotada.',
             'mano_obra' => 'Mano de obra añadida.',
         ];
@@ -69,7 +70,9 @@ class ReparacionesControlador
             'pieza' => 'Selecciona una pieza válida.',
             'unidades' => 'La cantidad debe ser un número entero de 1 o más.',
             'guardar' => 'No se ha podido añadir la pieza.',
-            'horas' => 'Las horas deben ser un número mayor que 0.',
+            'stock' => 'No hay existencias suficientes de esa pieza.',
+            'quitar_pieza' => 'No se ha podido quitar la pieza.',
+            'horas' => 'Introduce una cantidad de horas decimal mayor que 0.',
             'tarifa' => 'La tarifa por hora debe ser un número igual o mayor que 0.',
             'mano_obra' => 'No se ha podido añadir la mano de obra.',
             'factura_abierta' => 'La factura estará disponible cuando se cierre la reparación.',
@@ -122,12 +125,61 @@ class ReparacionesControlador
         }
 
         try {
-            $this->reparaciones->anadirPieza($id, $piezaId, $unidades);
+            if (!$this->reparaciones->anadirPieza($id, $piezaId, $unidades)) {
+                $actual = $this->reparaciones->buscar($id);
+                if (!$actual) {
+                    $this->noEncontrada();
+                    return;
+                }
+                $error = $actual['fecha_salida'] !== null ? 'cerrada' : 'stock';
+                $this->redirigir('index.php?accion=ver&id=' . $id . '&error=' . $error);
+            }
         } catch (PDOException $e) {
             $this->redirigir('index.php?accion=ver&id=' . $id . '&error=guardar');
         }
 
         $this->redirigir('index.php?accion=ver&id=' . $id . '&msg=pieza');
+    }
+
+    public function quitarPieza(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirigir('index.php?accion=listado');
+        }
+
+        $id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+        $piezaId = filter_input(INPUT_POST, 'pieza_id', FILTER_VALIDATE_INT);
+        if ($id === false || $id === null || $id < 1) {
+            $this->redirigir('index.php?accion=listado');
+        }
+
+        $reparacion = $this->reparaciones->buscar($id);
+        if (!$reparacion) {
+            $this->noEncontrada();
+            return;
+        }
+        if ($reparacion['fecha_salida'] !== null) {
+            $this->redirigir('index.php?accion=ver&id=' . $id . '&error=cerrada');
+        }
+        if ($piezaId === false || $piezaId === null || $piezaId < 1) {
+            $this->redirigir('index.php?accion=ver&id=' . $id . '&error=quitar_pieza');
+        }
+
+        try {
+            if (!$this->reparaciones->quitarPieza($id, $piezaId)) {
+                $actual = $this->reparaciones->buscar($id);
+                if (!$actual) {
+                    $this->noEncontrada();
+                    return;
+                }
+                $error = $actual['fecha_salida'] !== null ? 'cerrada' : 'quitar_pieza';
+                $this->redirigir('index.php?accion=ver&id=' . $id . '&error=' . $error);
+            }
+        } catch (PDOException $e) {
+            $this->redirigir('index.php?accion=ver&id=' . $id . '&error=quitar_pieza');
+        }
+
+        $this->redirigir('index.php?accion=ver&id=' . $id . '&msg=pieza_quitada');
     }
 
     public function cerrar(): void
@@ -206,7 +258,8 @@ class ReparacionesControlador
 
         $this->mostrar('factura', [
             'titulo' => 'Factura · reparación ' . $id,
-            'numeroFactura' => 'NX-' . date('Y') . '-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT),
+            'numeroFactura' => 'NX-' . date('Y', strtotime($reparacion['fecha_salida']))
+                . '-' . str_pad((string) $id, 6, '0', STR_PAD_LEFT),
             'reparacion' => $reparacion,
             'piezas' => $piezas,
             'base' => $base,

@@ -69,7 +69,7 @@ return $consulta->fetchAll();
         //         e importe (cantidad por precio), ordenadas por nombre
 
         $consulta = $this->pdo->prepare(
-        'SELECT piezas.referencia, piezas.nombre, pr.unidades, piezas.precio,
+        'SELECT piezas.referencia, piezas.nombre, pr.id_pieza, pr.unidades, piezas.precio,
         pr.unidades * piezas.precio AS importe
         FROM piezas_reparacion AS pr
         JOIN piezas ON piezas.id = pr.id_pieza
@@ -81,21 +81,102 @@ $consulta->execute([$id]);
 return $consulta->fetchAll();
     }
 
-    public function anadirPieza(int $reparacionId, int $piezaId, int $unidades): void
+    public function anadirPieza(int $reparacionId, int $piezaId, int $unidades): bool
     {
-        $actualizar = $this->pdo->prepare(
-            'UPDATE piezas_reparacion
-            SET unidades = unidades + ?
-            WHERE id_reparacion = ? AND id_pieza = ?'
-        );
-        $actualizar->execute([$unidades, $reparacionId, $piezaId]);
-
-        if ($actualizar->rowCount() === 0) {
-            $insertar = $this->pdo->prepare(
-                'INSERT INTO piezas_reparacion (id_reparacion, id_pieza, unidades)
-                VALUES (?, ?, ?)'
+        $this->pdo->beginTransaction();
+        try {
+            $bloquearReparacion = $this->pdo->prepare(
+                'SELECT fecha_salida FROM reparacion WHERE id = ? FOR UPDATE'
             );
-            $insertar->execute([$reparacionId, $piezaId, $unidades]);
+            $bloquearReparacion->execute([$reparacionId]);
+            $reparacion = $bloquearReparacion->fetch();
+            if (!$reparacion || $reparacion['fecha_salida'] !== null) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $descontarStock = $this->pdo->prepare(
+                'UPDATE piezas SET stock = stock - ? WHERE id = ? AND stock >= ?'
+            );
+            $descontarStock->execute([$unidades, $piezaId, $unidades]);
+            if ($descontarStock->rowCount() !== 1) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $buscarLinea = $this->pdo->prepare(
+                'SELECT unidades FROM piezas_reparacion
+                WHERE id_reparacion = ? AND id_pieza = ? FOR UPDATE'
+            );
+            $buscarLinea->execute([$reparacionId, $piezaId]);
+            if ($buscarLinea->fetch()) {
+                $actualizar = $this->pdo->prepare(
+                    'UPDATE piezas_reparacion
+                    SET unidades = unidades + ?
+                    WHERE id_reparacion = ? AND id_pieza = ?'
+                );
+                $actualizar->execute([$unidades, $reparacionId, $piezaId]);
+            } else {
+                $insertar = $this->pdo->prepare(
+                    'INSERT INTO piezas_reparacion (id_reparacion, id_pieza, unidades)
+                    VALUES (?, ?, ?)'
+                );
+                $insertar->execute([$reparacionId, $piezaId, $unidades]);
+            }
+
+            $this->pdo->commit();
+            return true;
+        } catch (Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    public function quitarPieza(int $reparacionId, int $piezaId): bool
+    {
+        $this->pdo->beginTransaction();
+        try {
+            $bloquearReparacion = $this->pdo->prepare(
+                'SELECT fecha_salida FROM reparacion WHERE id = ? FOR UPDATE'
+            );
+            $bloquearReparacion->execute([$reparacionId]);
+            $reparacion = $bloquearReparacion->fetch();
+            if (!$reparacion || $reparacion['fecha_salida'] !== null) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $buscarLinea = $this->pdo->prepare(
+                'SELECT unidades FROM piezas_reparacion
+                WHERE id_reparacion = ? AND id_pieza = ? FOR UPDATE'
+            );
+            $buscarLinea->execute([$reparacionId, $piezaId]);
+            $linea = $buscarLinea->fetch();
+            if (!$linea) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            $eliminar = $this->pdo->prepare(
+                'DELETE FROM piezas_reparacion
+                WHERE id_reparacion = ? AND id_pieza = ?'
+            );
+            $eliminar->execute([$reparacionId, $piezaId]);
+
+            $devolverStock = $this->pdo->prepare(
+                'UPDATE piezas SET stock = stock + ? WHERE id = ?'
+            );
+            $devolverStock->execute([(int) $linea['unidades'], $piezaId]);
+
+            $this->pdo->commit();
+            return true;
+        } catch (Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
         }
     }
 

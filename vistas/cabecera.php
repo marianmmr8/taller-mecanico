@@ -26,7 +26,12 @@
       </a>
       <nav aria-label="Navegación principal">
       <a href="index.php">Reparaciones</a>
+      <a href="index.php?seccion=administracion">Administración</a>
       <a class="nav-primary" href="index.php?accion=nueva">Nueva reparación</a>
+      <form method="post" action="logout.php" class="logout-form">
+        <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
+        <button class="logout-button" type="submit">Salir, <?= e($_SESSION['usuario'] ?? '') ?></button>
+      </form>
       </nav>
     </div>
   </header>

@@ -57,7 +57,9 @@ CREATE TABLE `piezas` (
   `id` int(11) NOT NULL,
   `referencia` varchar(100) NOT NULL,
   `nombre` varchar(100) NOT NULL,
-  `precio` decimal(10,2) NOT NULL
+  `precio` decimal(10,2) NOT NULL,
+  `stock` int(11) NOT NULL DEFAULT 0,
+  `stock_minimo` int(11) NOT NULL DEFAULT 4
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------

@@ -17,6 +17,7 @@ require __DIR__ . '/cabecera.php'; ?>
 <?php endif; ?>
 <!-- // option para mostrar los vehiculos, si ya habia alguno seleccionado se muestra el seleccionado -->
 <form method="post" action="index.php?accion=guardar" class="alta">
+  <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
   <label for="vehiculo_id">Vehículo</label>
   <select name="vehiculo_id" id="vehiculo_id" required>
     <option value="">Elige un vehículo…</option>

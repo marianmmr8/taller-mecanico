@@ -26,7 +26,7 @@ ORDER BY nombre')->fetchAll();
 
     public function piezas(): array
     {
-        return $this->pdo->query('SELECT id, referencia, nombre, precio
+        return $this->pdo->query('SELECT id, referencia, nombre, precio, stock, stock_minimo
 FROM piezas
 ORDER BY nombre')->fetchAll();
     }
