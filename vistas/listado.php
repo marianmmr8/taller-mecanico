@@ -2,12 +2,29 @@
 /**
  * @var array $reparaciones
 * @var string $titulo 
+ * @var string $estado
+ * @var string $error
 */
 
 require __DIR__ . '/cabecera.php'; ?>
 
+<form method="get" action="index.php" class="linea">
+  <input type="hidden" name="accion" value="listado">
+  <label for="estado">Mostrar</label>
+  <select name="estado" id="estado">
+    <option value="abiertas" <?= $estado === 'abiertas' ? 'selected' : '' ?>>En el taller</option>
+    <option value="finalizadas" <?= $estado === 'finalizadas' ? 'selected' : '' ?>>Finalizadas</option>
+    <option value="todas" <?= $estado === 'todas' ? 'selected' : '' ?>>Todas</option>
+  </select>
+  <button>Filtrar</button>
+</form>
+
+<?php if ($error): ?>
+  <p class="error"><?= e($error) ?></p>
+<?php endif; ?>
+
 <?php if (!$reparaciones): ?>
-  <p>Todavía no hay ninguna reparación.</p>
+  <p class="empty-state">No hay reparaciones que coincidan con el filtro.</p>
 <?php else: ?>
   <table>
     <thead>
@@ -30,10 +47,10 @@ require __DIR__ . '/cabecera.php'; ?>
             <td><?= e($re['mecanico']) ?></td>
             <td>
                 <?php if($re['fecha_salida'] === null): ?>
-                    <strong>En el taller</strong>
+                    <strong class="status status-open">En el taller</strong>
 
                 <?php else: ?>
-                    Salio el <?=  fecha ($re['fecha_salida']) ?> 
+                    <span class="status status-closed">Salió el <?= fecha($re['fecha_salida']) ?></span>
                     <?php endif ; ?>   
             </td>
 

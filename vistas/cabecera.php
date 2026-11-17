@@ -3,16 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= e($titulo) ?> · Taller Genil</title>
+  <meta name="theme-color" content="#172333">
+  <title><?= e($titulo) ?> · Nexo Motor</title>
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
-  <header>
-    <p class="marca">Taller Mecánico Genil</p>
-    <nav>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.php" aria-label="Nexo Motor, inicio">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" focusable="false">
+            <rect x="1" y="1" width="46" height="46" rx="15" fill="currentColor"/>
+            <path d="M10 29h28l-2.5-8a3 3 0 0 0-2.9-2.1H15.4a3 3 0 0 0-2.9 2.1L10 29Zm3 0v4m22-4v4M16 24h16" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/>
+            <circle cx="16" cy="31" r="2" fill="#fff"/>
+            <circle cx="32" cy="31" r="2" fill="#fff"/>
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <strong>Nexo Motor</strong>
+          <small>TALLER · SERVICIO</small>
+        </span>
+      </a>
+      <nav aria-label="Navegación principal">
       <a href="index.php">Reparaciones</a>
-      <a href="index.php?accion=nueva">Nueva reparación</a>
-    </nav>
+      <a class="nav-primary" href="index.php?accion=nueva">Nueva reparación</a>
+      </nav>
+    </div>
   </header>
-  <main>
-    <h1><?= e($titulo) ?></h1>
+  <main class="main-content">
+    <div class="page-heading">
+      <span class="eyebrow">GESTIÓN DEL TALLER</span>
+      <h1><?= e($titulo) ?></h1>
+    </div>

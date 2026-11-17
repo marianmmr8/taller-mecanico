@@ -43,7 +43,7 @@ CREATE TABLE `cliente` (
 
 CREATE TABLE `mecanicos` (
   `id` int(11) NOT NULL,
-  `nombre y apellidos` varchar(150) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
   `especialidad` enum('chapa y pintura','mecánica general','electromecanico','') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -63,10 +63,10 @@ CREATE TABLE `piezas` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `piezas reparacion`
+-- Estructura de tabla para la tabla `piezas_reparacion`
 --
 
-CREATE TABLE `piezas reparacion` (
+CREATE TABLE `piezas_reparacion` (
   `id` int(11) NOT NULL,
   `id_reparacion` int(11) NOT NULL,
   `id_pieza` int(11) NOT NULL,
@@ -84,8 +84,9 @@ CREATE TABLE `reparacion` (
   `id_vehiculo` int(11) NOT NULL,
   `id_mecanico` int(11) NOT NULL,
   `fecha_entrega` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `descripcion_incidencia` varchar(250) NOT NULL,
-  `mano de obra` decimal(10,2) NOT NULL,
+  `descripcion` varchar(250) NOT NULL,
+  `mano_obra` decimal(10,2) NOT NULL,
+  `horas_mano_obra` decimal(8,2) NOT NULL DEFAULT 0.00,
   `fecha_salida` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -127,12 +128,13 @@ ALTER TABLE `piezas`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `piezas reparacion`
+-- Indices de la tabla `piezas_reparacion`
 --
-ALTER TABLE `piezas reparacion`
+ALTER TABLE `piezas_reparacion`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_pieza` (`id_pieza`),
-  ADD KEY `id_reparacion` (`id_reparacion`);
+  ADD KEY `id_reparacion` (`id_reparacion`),
+  ADD UNIQUE KEY `uq_reparacion_pieza` (`id_reparacion`, `id_pieza`);
 
 --
 -- Indices de la tabla `reparacion`
@@ -173,9 +175,9 @@ ALTER TABLE `piezas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT de la tabla `piezas reparacion`
+-- AUTO_INCREMENT de la tabla `piezas_reparacion`
 --
-ALTER TABLE `piezas reparacion`
+ALTER TABLE `piezas_reparacion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -195,11 +197,11 @@ ALTER TABLE `vehiculo`
 --
 
 --
--- Filtros para la tabla `piezas reparacion`
+-- Filtros para la tabla `piezas_reparacion`
 --
-ALTER TABLE `piezas reparacion`
-  ADD CONSTRAINT `piezas reparacion_ibfk_1` FOREIGN KEY (`id_reparacion`) REFERENCES `reparacion` (`id`),
-  ADD CONSTRAINT `piezas reparacion_ibfk_2` FOREIGN KEY (`id_pieza`) REFERENCES `piezas` (`id`);
+ALTER TABLE `piezas_reparacion`
+  ADD CONSTRAINT `piezas_reparacion_ibfk_1` FOREIGN KEY (`id_reparacion`) REFERENCES `reparacion` (`id`),
+  ADD CONSTRAINT `piezas_reparacion_ibfk_2` FOREIGN KEY (`id_pieza`) REFERENCES `piezas` (`id`);
 
 --
 -- Filtros para la tabla `reparacion`

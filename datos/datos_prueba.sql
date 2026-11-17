@@ -14,7 +14,7 @@ INSERT INTO `cliente` (`id`, `nombre`, `apellidos`, `telefono`, `correo`) VALUES
 (7, 'Sara', 'Diaz Torres', '666789012', 'sara.diaz@example.com'),
 (8, 'Diego', 'Alvarez Gil', '677890123', 'diego.alvarez@example.com');
 
-INSERT INTO `mecanicos` (`id`, `nombre y apellidos`, `especialidad`) VALUES
+INSERT INTO `mecanicos` (`id`, `nombre`, `especialidad`) VALUES
 (1, 'Antonio Perez Gomez', 'mecánica general'),
 (2, 'Beatriz Molina Ruiz', 'electromecanico'),
 (3, 'Raul Sanchez Diaz', 'chapa y pintura'),
@@ -47,7 +47,7 @@ INSERT INTO `vehiculo` (`id`, `matricula`, `marca`, `modelo`, `anio`, `id_client
 (10, '0123 LMN', 'Dacia', 'Sandero', 2023, 3);
 
 INSERT INTO `reparacion`
-  (`id`, `id_vehiculo`, `id_mecanico`, `fecha_entrega`, `descripcion_incidencia`, `mano de obra`, `fecha_salida`)
+  (`id`, `id_vehiculo`, `id_mecanico`, `fecha_entrega`, `descripcion`, `mano_obra`, `fecha_salida`)
 VALUES
 (1, 1, 1, '2026-10-02 09:00:00', 'Revision periodica y cambio de aceite', 45.00, '2026-10-02 12:30:00'),
 (2, 2, 2, '2026-10-04 10:15:00', 'La bateria se descarga y el motor no arranca', 55.00, '2026-10-04 15:00:00'),
@@ -60,7 +60,7 @@ VALUES
 (9, 9, 4, '2026-11-12 08:15:00', 'Revision periodica, filtros y bujias', 60.00, '2026-11-12 13:00:00'),
 (10, 10, 1, '2026-11-13 09:30:00', 'Vibracion y desgaste irregular de neumaticos', 50.00, NULL);
 
-INSERT INTO `piezas reparacion` (`id`, `id_reparacion`, `id_pieza`, `unidades`) VALUES
+INSERT INTO `piezas_reparacion` (`id`, `id_reparacion`, `id_pieza`, `unidades`) VALUES
 (1, 1, 1, 5),
 (2, 1, 2, 1),
 (3, 2, 5, 1),
