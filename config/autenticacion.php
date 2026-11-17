@@ -17,6 +17,25 @@ function iniciarSesionAplicacion(): void
     session_start();
 }
 
+function modoDemoAplicacion(): bool
+{
+    require_once __DIR__ . '/config.php';
+    return isset($modoDemo) && $modoDemo === true;
+}
+
+function activarSesionDemo(): void
+{
+    if (!modoDemoAplicacion()) {
+        return;
+    }
+    if (!isset($_SESSION['usuario'])) {
+        $_SESSION['usuario'] = 'Usuario demo';
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+    }
+}
+
 function credencialesLogin(): array
 {
     $archivo = __DIR__ . '/auth_local.php';

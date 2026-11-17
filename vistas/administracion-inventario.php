@@ -49,19 +49,23 @@
               <?php endif; ?>
             </td>
             <td>
-              <form method="post" action="index.php?seccion=administracion&amp;accion=reponer" class="replenish-form">
-                <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
-                <input type="hidden" name="pieza_id" value="<?= (int) $pieza['id'] ?>">
-                <label>
-                  <span class="visually-hidden">Unidades que llegan</span>
-                  <input type="number" name="unidades" min="1" step="1" placeholder="Unidades" required>
-                </label>
-                <label>
-                  <span class="visually-hidden">Mínimo de aviso</span>
-                  <input type="number" name="stock_minimo" min="0" step="1" value="<?= $minimo ?>" placeholder="Mínimo de aviso" required>
-                </label>
-                <button type="submit">Registrar</button>
-              </form>
+              <?php if (modoDemoAplicacion()): ?>
+                <span class="status status-stock">Solo consulta</span>
+              <?php else: ?>
+                <form method="post" action="index.php?seccion=administracion&amp;accion=reponer" class="replenish-form">
+                  <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
+                  <input type="hidden" name="pieza_id" value="<?= (int) $pieza['id'] ?>">
+                  <label>
+                    <span class="visually-hidden">Unidades que llegan</span>
+                    <input type="number" name="unidades" min="1" step="1" placeholder="Unidades" required>
+                  </label>
+                  <label>
+                    <span class="visually-hidden">Mínimo de aviso</span>
+                    <input type="number" name="stock_minimo" min="0" step="1" value="<?= $minimo ?>" placeholder="Mínimo de aviso" required>
+                  </label>
+                  <button type="submit">Registrar</button>
+                </form>
+              <?php endif; ?>
             </td>
           </tr>
         <?php endforeach; ?>

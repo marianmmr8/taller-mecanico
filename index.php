@@ -2,9 +2,27 @@
 // Controlador frontal: todas las peticiones de la aplicación entran por aquí
 require_once __DIR__ . '/config/autenticacion.php';
 iniciarSesionAplicacion();
+activarSesionDemo();
 if (!isset($_SESSION['usuario'])) {
     header('Location: login.php');
     exit;
+}
+if (
+    modoDemoAplicacion()
+    && ($_SERVER['REQUEST_METHOD'] === 'POST'
+        || in_array($_GET['accion'] ?? '', [
+            'nueva',
+            'guardar',
+            'anadirPieza',
+            'quitarPieza',
+            'anadirManoObra',
+            'cerrar',
+        ], true)
+        || (($_GET['seccion'] ?? '') === 'administracion'
+            && ($_GET['accion'] ?? '') === 'reponer'))
+) {
+    http_response_code(403);
+    exit('El modo demo no permite modificar datos.');
 }
 if (
     $_SERVER['REQUEST_METHOD'] === 'POST'

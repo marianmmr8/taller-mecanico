@@ -116,6 +116,21 @@ nav .nav-primary:hover {
   transform: translateY(-1px);
 }
 
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  margin-left: 6px;
+  padding: 7px 12px;
+  border: 1px solid rgb(237 118 38 / 65%);
+  border-radius: 999px;
+  background: rgb(237 118 38 / 12%);
+  color: #ffc29c;
+  font-size: 0.78rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .main-content {
   width: min(1180px, 100%);
   min-height: calc(100vh - 150px);

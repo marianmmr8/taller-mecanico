@@ -52,7 +52,7 @@ require __DIR__ . '/cabecera.php'; ?>
                  <th class="num">Unidades</th>
                   <th class="num">Precio</th>
                    <th class="num">Importe</th>
-                   <?php if ($reparacion['fecha_salida'] === null): ?>
+                   <?php if ($reparacion['fecha_salida'] === null && !modoDemoAplicacion()): ?>
                      <th>Acción</th>
                    <?php endif; ?>
                 </tr>
@@ -64,7 +64,7 @@ require __DIR__ . '/cabecera.php'; ?>
                     <td class="num"><?= $pi['unidades'] ?></td>
                     <td class="num"><?= euros($pi['precio']) ?></td>
                     <td class="num"><?= euros($pi['importe']) ?></td>
-                    <?php if ($reparacion['fecha_salida'] === null): ?>
+                    <?php if ($reparacion['fecha_salida'] === null && !modoDemoAplicacion()): ?>
                       <td>
                         <form method="post" action="index.php?accion=quitarPieza" class="piece-remove-form">
                           <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
@@ -81,7 +81,7 @@ require __DIR__ . '/cabecera.php'; ?>
         </table>
         <?php endif; ?>
 
-<?php if ($reparacion['fecha_salida'] === null): ?>
+<?php if ($reparacion['fecha_salida'] === null && !modoDemoAplicacion()): ?>
   <h2>Añadir pieza</h2>
   <form method="post" class="linea" action="index.php?accion=anadirPieza&amp;id=<?= (int) $reparacion['id'] ?>">
     <input type="hidden" name="csrf_token" value="<?= e(tokenCsrfAplicacion()) ?>">
