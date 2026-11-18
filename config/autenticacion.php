@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/config.php';
+
 function iniciarSesionAplicacion(): void
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
@@ -19,7 +21,7 @@ function iniciarSesionAplicacion(): void
 
 function modoDemoAplicacion(): bool
 {
-    require_once __DIR__ . '/config.php';
+    global $modoDemo;
     return isset($modoDemo) && $modoDemo === true;
 }
 

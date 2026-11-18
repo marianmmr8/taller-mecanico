@@ -1,6 +1,6 @@
 <?php
 
-require_once "config.php";
+require_once __DIR__ . "/config.php";
 // Devuelve la conexión con la base de datos del taller
 function conectar(): PDO
 {
@@ -16,6 +16,7 @@ function conectar(): PDO
             ]
         );
     } catch (PDOException $e) {
+        
         exit('No se ha podido conectar con la base de datos.');
     }
 }
